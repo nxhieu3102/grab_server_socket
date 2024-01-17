@@ -11,7 +11,10 @@ class SocketMsgModel {
     destinationAddress,
     customerPosition,
     driverPosition,
+    rideId,
+    distance,
   }) {
+    this.rideId = rideId;
     this.customerId = customerId;
     this.driverId = driverId;
     this.customerSocketId = customerSocketId;
@@ -22,6 +25,7 @@ class SocketMsgModel {
     this.destinationAddress = destinationAddress;
     this.customerPosition = customerPosition;
     this.driverPosition = driverPosition;
+    this.distance = distance;
   }
   static fromJson(json) {
     return new SocketMsgModel({
@@ -35,6 +39,8 @@ class SocketMsgModel {
       destinationAddress: json['destinationAddress'] || '',
       customerPosition: json['customerPosition'] || null,
       driverPosition: json['driverPosition'] || null,
+      rideId: json['rideId'] || '',
+      distance: json['distance'] || '',
     });
   }
 }
