@@ -4,15 +4,15 @@ const http = require('http');
 const socketIO = require('socket.io');
 const app = express();
 const server = http.createServer(app);
-const io = socketIO(server)
-
+const io = socketIO(server, {
+    maxHttpBufferSize: 1e7 
+  });
 let count = 0
 
 io.eio.pingTimeout = 120000;
 io.eio.pingInterval = 120000;
-
 rooms = new Map();
-
+console.log(io.maxHttpBufferSize);
 app.use(express.json())
 
 io.on('connection', (socket) => {
@@ -33,8 +33,19 @@ io.on('connection', (socket) => {
 
     socket.on('request_ride', (msg) => {
         const socketMsg = SocketMsgModel.fromJson(msg);
+        console.log('socketMsg', socketMsg);
         socketMsg.customerSocketId = socket.id;
         io.emit('request_ride', socketMsg);
+    })
+
+    socket.on('start_ride', (msg) => {
+        console.log('start_ride');
+        socket.to(msg.customerSocketId).emit('start_ride');
+    })
+
+    socket.on('finish_ride', (msg) => {
+        console.log('finish_ride');
+        socket.to(msg.customerSocketId).emit('finish_ride');
     })
 
     socket.on('accept_ride', (msg) => {
@@ -42,6 +53,7 @@ io.on('connection', (socket) => {
         const socketMsg = SocketMsgModel.fromJson(msg);
         socketMsg.driverSocketId = socket.id;
         const ids = [socketMsg.customerId, socketMsg.driverId, socketMsg.customerSocketId, socketMsg.driverSocketId].sort();
+        console.log('accept_ride', ids);
         const idRoom = ids.join('###');
         socket.join(idRoom);
 
