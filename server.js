@@ -58,8 +58,6 @@ io.on('connection', (socket) => {
         socket.join(idRoom);
 
         if (!rooms.has(idRoom) || rooms.get(idRoom) == false) {
-            console.log(idRoom);
-            console.log('new room');
             rooms.set(idRoom, true);
             io.to(socketMsg.customerSocketId).emit('accept_ride', socketMsg);
         }
